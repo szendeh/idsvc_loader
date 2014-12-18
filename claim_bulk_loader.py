@@ -51,6 +51,8 @@ def testLine(line):
             source = 'automated'
 
         if mit_id and name_literal and handle:
+            url = baseUrl + mit_id +'?wid='+ handle.group(1)
+            
             data_object = {
                 "identifier": mit_id,
                 "name": name_literal,
@@ -58,7 +60,14 @@ def testLine(line):
                 "workIdentifier": handle.group(1),
                 "workSchema": 'cnri'
             }
-            r = requests.put(baseUrl + mit_id +'?wid='+ handle.group(1), data=json.dumps(data_object), headers = {'content-type': 'application/json'})
+
+            logger.info("PUT url: '{0}'".format(url))
+            logger.info("PUT data: '{0}'".format(json.dumps(data_object)))
+
+            r = requests.put(   url,
+                                data=json.dumps(data_object),
+                                headers={'content-type': 'application/json'})
+            
             if (r.status_code == 200 or r.status_code == 201 or r.status_code == 204):
                 return True
             else:
@@ -93,7 +102,8 @@ def processFiles(pid):
     success_filename    = process_dirname +'/'+ 'process_success_list.txt'
     failed_filename     = process_dirname +'/'+ 'process_failed_list.txt'
 
-    file_list = fnmatch.filter(os.listdir(process_dirname), 'new*.txt') + fnmatch.filter(os.listdir(process_dirname), 'failed*.txt')
+    file_list = fnmatch.filter(os.listdir(process_dirname), 'new*.txt') +
+                fnmatch.filter(os.listdir(process_dirname), 'failed*.txt')
 
     if (len(file_list)):
         try:
@@ -147,7 +157,8 @@ def moveFiles(pid):
 
     process_dirname = 'process_'+ pid
 
-    file_list = fnmatch.filter(os.listdir('.'), 'new*.txt') + fnmatch.filter(os.listdir('.'), 'failed*.txt')
+    file_list = fnmatch.filter(os.listdir('.'), 'new*.txt') +
+                fnmatch.filter(os.listdir('.'), 'failed*.txt')
 
     logger.info('found files: '+ ','.join(file_list))
 
