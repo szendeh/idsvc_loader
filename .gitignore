@@ -5,3 +5,4 @@ process_*
 new_*
 failed_*
 *test*
+*.bak

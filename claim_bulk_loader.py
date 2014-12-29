@@ -27,7 +27,7 @@ logging.basicConfig(level       = logging.INFO,
 logger = logging
 
 # should use ARGV to get this
-baseUrl = 'http://localhost:8080/claim/'
+baseUrl = 'http://szendeh1-8080.terminal.com/claim/'
 
 def testLine(line):
     """
@@ -40,6 +40,7 @@ def testLine(line):
         line_array = line.split("\t")
 
         if (len(line_array) < 6):
+            logger.error("line array too short: '{0}'".format(line_array))
             return False
 
         handle = re.match(r'http\:\/\/hdl\.handle\.net/(1721\.1/\d+)', line_array[3])
@@ -49,6 +50,11 @@ def testLine(line):
             source = line_array[6]
         except IndexError:
             source = 'automated'
+
+        # logger.info("handle: '{0}'".format(handle))
+        # logger.info("mit_id: '{0}'".format(mit_id))
+        # logger.info("name_literal: '{0}'".format(name_literal))
+        # logger.info("source: '{0}'".format(source))
 
         if mit_id and name_literal and handle:
             url = baseUrl + mit_id +'?wid='+ handle.group(1)
@@ -102,8 +108,7 @@ def processFiles(pid):
     success_filename    = process_dirname +'/'+ 'process_success_list.txt'
     failed_filename     = process_dirname +'/'+ 'process_failed_list.txt'
 
-    file_list = fnmatch.filter(os.listdir(process_dirname), 'new*.txt') +
-                fnmatch.filter(os.listdir(process_dirname), 'failed*.txt')
+    file_list = fnmatch.filter(os.listdir(process_dirname), 'new*.txt') + fnmatch.filter(os.listdir(process_dirname), 'failed*.txt')
 
     if (len(file_list)):
         try:
@@ -157,8 +162,7 @@ def moveFiles(pid):
 
     process_dirname = 'process_'+ pid
 
-    file_list = fnmatch.filter(os.listdir('.'), 'new*.txt') +
-                fnmatch.filter(os.listdir('.'), 'failed*.txt')
+    file_list = fnmatch.filter(os.listdir('.'), 'new*.txt') + fnmatch.filter(os.listdir('.'), 'failed*.txt')
 
     logger.info('found files: '+ ','.join(file_list))
 
